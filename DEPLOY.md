@@ -1,4 +1,23 @@
-# 배포 가이드 - GitHub + Vercel
+# 배포 가이드 - GitHub + Vercel / GitHub Pages
+
+---
+
+## ⚡ 빠른 배포: GitHub Pages (권장)
+
+이미 GitHub에 푸시했다면, 아래만 하면 됩니다.
+
+1. **[seol-walk-beeper](https://github.com/bbanzzakk/seol-walk-beeper)** 저장소 이동
+2. **Settings** → 왼쪽 메뉴 **Pages**
+3. **Build and deployment** 섹션에서:
+   - Source: **Deploy from a branch**
+   - Branch: **main** / Folder: **/ (root)**
+4. **Save** 클릭
+
+1~2분 후 **https://bbanzzakk.github.io/seol-walk-beeper/** 에서 확인할 수 있습니다.
+
+---
+
+## Vercel 배포 (대안)
 
 ## 1단계: GitHub 저장소 만들기
 
