@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1112">
+  <title>설이 산책 삐삐</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@1.600/neodgm/style.css" rel="stylesheet">
+  <style>
+    :root {
+      --led-green: #7dff6b;
+      --led-dim: #2d4a28;
+      --screen-green: #0d1112;
+      --bezel-dark: #1c1f1a;
+      --bezel-olive: #2a2e26;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'NeoDunggeunmo', 'VT323', 'Share Tech Mono', monospace;
+      background: #0a0a0a;
+      min-height: 100dvh;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    }
+
+    /* 레트로 페이저 - olive bezel, pixel LCD */
+    .device {
+      background: linear-gradient(160deg, var(--bezel-olive) 0%, var(--bezel-dark) 50%, #151815 100%);
+      border-radius: clamp(16px, 6vw, 24px);
+      padding: clamp(16px, 5vw, 28px);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .screen {
+      background: var(--screen-green);
+      border-radius: clamp(8px, 3vw, 12px);
+      padding: clamp(20px, 5vw, 32px) clamp(18px, 4vw, 28px);
+      border: 2px solid #0a0c0a;
+      box-shadow: 
+        inset 0 0 60px rgba(125, 255, 107, 0.04),
+        inset 0 0 0 1px rgba(125, 255, 107, 0.06);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: clamp(16px, 4vw, 28px);
+      padding-bottom: clamp(12px, 3vw, 20px);
+      border-bottom: 1px solid var(--led-dim);
+    }
+
+    .title {
+      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-size: clamp(1.25rem, 5.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--led-green);
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px rgba(125, 255, 107, 0.4);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--led-green);
+      border-radius: 50%;
+      margin-left: 8px;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 8px var(--led-green);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .display-section {
+      margin-bottom: clamp(14px, 3.5vw, 20px);
+    }
+
+    .label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(0.6rem, 2.8vw, 0.7rem);
+      color: var(--led-dim);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .value {
+      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-size: clamp(1.2rem, 5.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--led-green);
+      text-shadow: 0 0 10px rgba(125, 255, 107, 0.25);
+    }
+
+    .time-display {
+      font-size: clamp(1.6rem, 7.5vw, 2rem);
+      letter-spacing: 4px;
+    }
+
+    .recommendation-box {
+      margin-top: clamp(18px, 4vw, 24px);
+      padding: clamp(14px, 4vw, 20px);
+      background: rgba(125, 255, 107, 0.03);
+      border: 1px solid var(--led-dim);
+      border-radius: 6px;
+    }
+
+    .recommendation {
+      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-size: clamp(1rem, 4.5vw, 1.2rem);
+      line-height: 1.7;
+      color: var(--led-green);
+      letter-spacing: 1px;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .loading {
+      color: var(--led-dim);
+      font-size: clamp(0.9rem, 4vw, 1rem);
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="screen">
+      <div class="header">
+        <span class="title">설이 산책 삐삐</span>
+        <span class="status-dot"></span>
+      </div>
+
+      <div class="display-section">
+        <div class="label">광주광역시 · 현재시각</div>
+        <div class="value time-display" id="time">--:--</div>
+      </div>
+
+      <div class="display-section">
+        <div class="label">현재 기온</div>
+        <div class="value" id="temp">--°C</div>
+      </div>
+
+      <div class="recommendation-box">
+        <div class="recommendation" id="recommendation">
+          <span class="loading">날씨 정보 로딩 중...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 광주광역시 좌표
+    const GWANGJU_LAT = 35.1595;
+    const GWANGJU_LON = 126.8526;
+
+    // 중형견 열 위험 데이터 (이미지 1 - How hot is too hot)
+    const HEAT_RISK = [
+      { temp: 15, level: 1, text: 'No evidence of risk: Have fun outside!' },
+      { temp: 18, level: 1, text: 'No evidence of risk: Have fun outside!' },
+      { temp: 21, level: 2, text: 'Risk is unlikely: Have fun outside, but be careful!' },
+      { temp: 23, level: 3, text: 'Unsafe potential. Keep an eye on your pet outdoors.' },
+      { temp: 26, level: 3, text: 'Unsafe potential. Keep an eye on your pet outdoors.' },
+      { temp: 29, level: 4, text: 'Dangerous weather developing. Use caution.' },
+      { temp: 32, level: 5, text: 'Potentially life-threatening heat. Avoid prolonged outdoor activity.' },
+      { temp: 35, level: 5, text: 'Potentially life-threatening heat. Avoid prolonged outdoor activity.' },
+      { temp: 37, level: 5, text: 'Potentially life-threatening heat. Avoid prolonged outdoor activity.' },
+      { temp: 43, level: 5, text: 'Potentially life-threatening heat. Avoid prolonged outdoor activity.' },
+    ];
+
+    // 기온·열위험에 따른 자연스러운 멘트
+    const HEAT_MESSAGES = {
+      1: '날씨 좋다! 신나게 산책 가자!',
+      2: '산책하기 좋은 날! 조금만 신경 써주자.',
+      3: '더운 편이야. 그늘에서 쉬어가며 산책하자!',
+      4: '더워! 마실 물 챙기고 30분 이내로만 산책해!',
+      5: '매우 위험해! 오래 있지 말고 물 꼭 챙겨!',
+    };
+
+    const COLD_MESSAGES = [
+      { min: 10, msg: '적당히 선선해. 맘 놓고 산책해도 돼!' },
+      { min: 5, msg: '쌀쌀하니 가벼운 옷 한 벌 챙겨 입히자!' },
+      { min: 0, msg: '쌀쌀하니 도톰한 옷을 입히자!' },
+      { min: -5, msg: '춥다! 패딩조끼나 후리스 껴입히고 가자!' },
+      { min: -10, msg: '엄청 춥다! 패딩에 목도리까지 꼭 챙기자!' },
+      { min: -Infinity, msg: '너무 추워! 패딩 입히고 10분만 산책하자!' },
+    ];
+
+    function getHeatRisk(temp) {
+      if (temp >= 37) return HEAT_RISK[9];
+      if (temp >= 35) return HEAT_RISK[8];
+      if (temp >= 32) return HEAT_RISK[7];
+      if (temp >= 29) return HEAT_RISK[6];
+      if (temp >= 26) return HEAT_RISK[5];
+      if (temp >= 23) return HEAT_RISK[4];
+      if (temp >= 21) return HEAT_RISK[3];
+      if (temp >= 18) return HEAT_RISK[2];
+      if (temp >= 15) return HEAT_RISK[1];
+      return HEAT_RISK[0];
+    }
+
+    function getColdMessage(temp) {
+      for (const item of COLD_MESSAGES) {
+        if (temp >= item.min) return item.msg;
+      }
+      return COLD_MESSAGES[COLD_MESSAGES.length - 1].msg;
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const options = { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      document.getElementById('time').textContent = now.toLocaleTimeString('ko-KR', options);
+    }
+
+    async function fetchWeather() {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${GWANGJU_LAT}&longitude=${GWANGJU_LON}&current=temperature_2m,relative_humidity_2m&timezone=Asia%2FSeoul`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+
+        document.getElementById('temp').textContent = `${temp}°C`;
+
+        const heatRisk = getHeatRisk(temp);
+        let recText = '';
+        if (temp >= 15) {
+          recText = HEAT_MESSAGES[heatRisk.level];
+        } else {
+          recText = getColdMessage(temp);
+        }
+
+        document.getElementById('recommendation').innerHTML = recText;
+      } catch (err) {
+        document.getElementById('recommendation').innerHTML = '날씨를 불러올 수 없습니다.<br>인터넷 연결을 확인해주세요.';
+        document.getElementById('temp').textContent = '--°C';
+      }
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+    fetchWeather();
+    setInterval(fetchWeather, 10 * 60 * 1000); // 10분마다 갱신
+  </script>
+</body>
+</html>
