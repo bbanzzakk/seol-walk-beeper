@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0d1112">
   <title>설이 산책 삐삐</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@1.600/neodgm/style.css" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +27,7 @@
     }
 
     body {
-      font-family: 'NeoDunggeunmo', 'VT323', 'Share Tech Mono', monospace;
+      font-family: 'NeoDunggeunmo', 'Malgun Gothic', monospace;
       background: #0a0a0a;
       min-height: 100dvh;
       min-height: 100vh;
@@ -69,7 +67,7 @@
     }
 
     .title {
-      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-family: 'NeoDunggeunmo', monospace;
       font-size: clamp(1.25rem, 5.5vw, 1.5rem);
       font-weight: 400;
       color: var(--led-green);
@@ -98,7 +96,7 @@
     }
 
     .label {
-      font-family: 'Share Tech Mono', monospace;
+      font-family: 'NeoDunggeunmo', monospace;
       font-size: clamp(0.6rem, 2.8vw, 0.7rem);
       color: var(--led-dim);
       letter-spacing: 2px;
@@ -107,7 +105,7 @@
     }
 
     .value {
-      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-family: 'NeoDunggeunmo', monospace;
       font-size: clamp(1.2rem, 5.5vw, 1.5rem);
       font-weight: 400;
       color: var(--led-green);
@@ -128,13 +126,28 @@
     }
 
     .recommendation {
-      font-family: 'NeoDunggeunmo', 'VT323', monospace;
+      font-family: 'NeoDunggeunmo', monospace;
       font-size: clamp(1rem, 4.5vw, 1.2rem);
       line-height: 1.7;
       color: var(--led-green);
       letter-spacing: 1px;
       word-break: keep-all;
       overflow-wrap: break-word;
+      min-height: 1.7em;
+    }
+
+    .recommendation .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--led-green);
+      margin-left: 2px;
+      animation: blink 0.8s step-end infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
     .loading {
@@ -232,7 +245,38 @@
       document.getElementById('time').textContent = now.toLocaleTimeString('ko-KR', options);
     }
 
+    function typeWriter(element, text, speed = 70, withCursor = true) {
+      element.innerHTML = '';
+      if (withCursor) {
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        element.appendChild(cursor);
+      }
+
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          if (text.substring(i, i + 4) === '<br>') {
+            element.insertBefore(document.createElement('br'), element.lastChild);
+            i += 4;
+          } else {
+            const span = document.createElement('span');
+            span.textContent = text[i];
+            element.insertBefore(span, element.lastChild);
+            i++;
+          }
+          setTimeout(type, speed);
+        } else if (withCursor && element.querySelector('.cursor')) {
+          element.querySelector('.cursor').remove();
+        }
+      }
+      type();
+    }
+
+    let isFirstLoad = true;
+
     async function fetchWeather() {
+      const recEl = document.getElementById('recommendation');
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${GWANGJU_LAT}&longitude=${GWANGJU_LON}&current=temperature_2m,relative_humidity_2m&timezone=Asia%2FSeoul`;
         const res = await fetch(url);
@@ -249,9 +293,20 @@
           recText = getColdMessage(temp);
         }
 
-        document.getElementById('recommendation').innerHTML = recText;
+        if (isFirstLoad) {
+          typeWriter(recEl, recText, 65, true);
+          isFirstLoad = false;
+        } else {
+          recEl.innerHTML = recText;
+        }
       } catch (err) {
-        document.getElementById('recommendation').innerHTML = '날씨를 불러올 수 없습니다.<br>인터넷 연결을 확인해주세요.';
+        const errMsg = '날씨를 불러올 수 없습니다.<br>인터넷 연결을 확인해주세요.';
+        if (isFirstLoad) {
+          typeWriter(recEl, errMsg, 65, true);
+          isFirstLoad = false;
+        } else {
+          recEl.innerHTML = errMsg;
+        }
         document.getElementById('temp').textContent = '--°C';
       }
     }
